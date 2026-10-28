@@ -3,155 +3,260 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#2f8f5b">
+<meta name="theme-color" content="#0f4a37">
+<meta name="color-scheme" content="light dark">
 <title>MyFoodMind — Zero scarti, più sapore</title>
 <style>
 :root{
-  --bg:#f5f7ec; --card:#ffffff; --ink:#1d2b22; --muted:#6b7a70; --line:#e3e8d9;
-  --g:#2f8f5b; --g-d:#1f6b42; --g-l:#e1f2e6;
-  --ok:#2f8f5b; --warn:#e8892b; --warn-l:#fdf0e0; --bad:#d8473d; --bad-l:#fbe6e4;
-  --r:18px;
+  /* Verde bosco (primario), giallo (accento), menta (sezioni), neutri leggermente caldi */
+  --forest:#0f4a37; --forest-2:#17604a; --forest-ink:#ffffff; --forest-sub:#cfe6d6;
+  --yellow:#fbc62d; --yellow-ink:#14231b;
+  --mint:#cdeab4; --mint-soft:#e8f5db;
+  --bg:#f6f6f1; --card:#ffffff; --ink:#14231b; --muted:#5a6a60; --line:#e4e6dc;
+  --ok-bg:#dcf1e1; --ok-ink:#14603a;
+  --warn-bg:#fdecc8; --warn-ink:#7a4a00;
+  --bad-bg:#fbdad5; --bad-ink:#9b2315; --bad-solid:#c2381f;
+  --tile:#e8f5db;
+  --r:20px; --r-lg:28px;
+  --shadow:0 2px 0 rgba(15,74,55,.04), 0 10px 24px rgba(15,74,55,.07);
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --forest:#145a42; --forest-2:#1d7156;
+    --mint:#1b3a2a; --mint-soft:#1f4331;
+    --bg:#0d1712; --card:#16241c; --ink:#eef4ee; --muted:#a3b3a8; --line:#27382d;
+    --ok-bg:#1d4630; --ok-ink:#a8e6bf;
+    --warn-bg:#4a3a10; --warn-ink:#f9d27a;
+    --bad-bg:#4d1f1a; --bad-ink:#ffb8ad; --bad-solid:#d9503a;
+    --tile:#1f4331;
+    --shadow:0 10px 24px rgba(0,0,0,.35);
+  }
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html{color-scheme:light}
-body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;padding-bottom:96px}
-header{padding:calc(env(safe-area-inset-top) + 16px) 18px 6px;max-width:640px;margin:0 auto}
-.logo{display:flex;align-items:center;gap:8px;font-weight:800;font-size:22px;letter-spacing:-.3px}
-.logo small{display:block;font-weight:500;font-size:13px;color:var(--muted);letter-spacing:0}
-main{max-width:640px;margin:0 auto;padding:6px 18px}
-h1{font-size:28px;line-height:1.15;margin:14px 0 6px;letter-spacing:-.5px}
-h2{font-size:19px;margin:22px 0 8px}
-p.sub{color:var(--muted);margin:0 0 14px}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.5 "Avenir Next","Segoe UI",-apple-system,BlinkMacSystemFont,Roboto,Helvetica,Arial,sans-serif;padding-bottom:104px}
+.wrap{max-width:1080px;margin:0 auto;padding-left:20px;padding-right:20px}
+
+/* ---- Barra + hero verde ---- */
+.top{background:var(--forest);color:var(--forest-ink);border-radius:0 0 var(--r-lg) var(--r-lg);padding-top:env(safe-area-inset-top)}
+.bar{display:flex;align-items:center;justify-content:space-between;gap:16px;padding-top:18px;padding-bottom:6px}
+.logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:22px;letter-spacing:-.4px}
+.logo .mark{width:38px;height:38px;border-radius:12px;background:var(--yellow);display:grid;place-items:center;font-size:21px}
+.hero{display:grid;grid-template-columns:1fr;gap:20px;padding-top:26px;padding-bottom:36px;align-items:center}
+.hero h1{font-size:clamp(34px,8.5vw,60px);line-height:1.04;letter-spacing:-1.5px;margin:0 0 12px;font-weight:800}
+.hero p{margin:0;color:var(--forest-sub);font-size:18px;max-width:34ch}
+#hero-extra{margin-top:22px;display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.hpill{background:rgba(255,255,255,.12);color:#fff;border-radius:99px;padding:8px 14px;font-size:15px;font-weight:700}
+.hero-art{display:none}
+.tile{background:#fff;border-radius:var(--r);box-shadow:0 10px 24px rgba(0,0,0,.2);display:grid;place-items:center;font-size:54px;aspect-ratio:1;color:#000}
+
+/* ---- Navigazione ---- */
+nav{display:flex;gap:4px}
+nav button{background:transparent;color:inherit;border:0;font:inherit;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 6px;font-size:13px;font-weight:700;border-radius:18px;flex:1;min-height:52px}
+nav button span{font-size:21px;line-height:1}
+nav button.on{background:var(--yellow);color:var(--yellow-ink)}
+@media (max-width:759px){
+  nav{position:fixed;left:12px;right:12px;bottom:calc(env(safe-area-inset-bottom) + 12px);max-width:560px;margin:0 auto;background:var(--forest);color:#cfe6d6;padding:7px;border-radius:28px;box-shadow:0 10px 28px rgba(0,0,0,.35);z-index:5;border:1px solid rgba(255,255,255,.1)}
+}
+@media (min-width:760px){
+  body{padding-bottom:48px}
+  nav button{flex-direction:row;font-size:16px;padding:10px 18px;color:#d6eadc;flex:none;min-height:0;border-radius:99px}
+  nav button span{display:none}
+  nav button:hover{background:rgba(255,255,255,.1)}
+  nav button.on{color:var(--yellow-ink)}
+  .hero{grid-template-columns:1.1fr .9fr;padding-top:40px;padding-bottom:56px}
+  .hero-art{display:grid;grid-template-columns:1fr 1fr;gap:14px;max-width:340px;justify-self:end}
+  .hero-art .tile:nth-child(2){transform:translateY(26px)}
+  .hero-art .tile:nth-child(3){transform:translateY(-14px)}
+  .hero-art .tile:nth-child(4){transform:translateY(12px)}
+}
+
+main{padding-top:30px}
+h2{font-size:26px;letter-spacing:-.6px;margin:0 0 4px;font-weight:800}
+p.sub{color:var(--muted);margin:0 0 18px}
 .view{display:none}.view.on{display:block}
-.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:14px;margin:10px 0;box-shadow:0 1px 0 rgba(0,0,0,.02)}
-.banner{border-radius:var(--r);padding:14px;margin:12px 0;background:var(--warn-l);border:1px solid #f3d6ad}
-.banner.bad{background:var(--bad-l);border-color:#f0bcb8}
-.banner b{display:block;margin-bottom:2px}
-.banner button{margin-top:10px}
-.ok-box{background:var(--g-l);border-color:#bfe0c9}
-.item{display:grid;grid-template-columns:48px 1fr auto;gap:10px;align-items:center}
-.emo{width:48px;height:48px;border-radius:14px;background:var(--g-l);display:grid;place-items:center;font-size:26px}
-.item h3{margin:0;font-size:17px}
-.item .meta{color:var(--muted);font-size:13px}
-.badge{font-size:12px;font-weight:700;padding:5px 10px;border-radius:99px;white-space:nowrap;text-align:center}
-.b-ok{background:var(--g-l);color:var(--g-d)}
-.b-warn{background:var(--warn-l);color:#a85a0c}
-.b-bad{background:var(--bad-l);color:#a82a21}
-.item.s-warn{border-left:5px solid var(--warn)}
-.item.s-bad{border-left:5px solid var(--bad)}
-.item.s-ok{border-left:5px solid var(--ok)}
-.row-btn{display:flex;gap:8px;margin-top:10px;grid-column:1/-1}
-button{font:inherit;cursor:pointer;border:0;border-radius:99px;padding:11px 18px;font-weight:700;background:var(--g);color:#fff}
-button.ghost{background:#fff;color:var(--ink);border:1px solid var(--line)}
-button.small{padding:7px 14px;font-size:14px}
-button.danger{background:#fff;color:var(--bad);border:1px solid #f0bcb8}
+
+/* ---- Pulsanti ---- */
+button{font:inherit;cursor:pointer;border:0;border-radius:99px;padding:13px 22px;font-weight:800;background:var(--forest);color:#fff;min-height:46px}
 button:active{transform:scale(.98)}
-label{display:block;font-weight:700;font-size:14px;margin:12px 0 5px}
-input,select{font:inherit;width:100%;padding:12px 14px;border-radius:14px;border:1px solid var(--line);background:#fff;color:var(--ink)}
-input:focus,select:focus{outline:2px solid var(--g);outline-offset:1px}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
+button.yellow{background:var(--yellow);color:var(--yellow-ink)}
+button.ghost{background:var(--card);color:var(--ink);border:1px solid var(--line)}
+button.danger{background:var(--card);color:var(--bad-ink);border:1px solid var(--bad-ink)}
+button.solid-danger{background:var(--bad-solid);color:#fff}
+button.small{padding:9px 16px;font-size:15px;min-height:40px}
+
+/* ---- Card ---- */
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px;box-shadow:var(--shadow)}
+.grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fill,minmax(270px,1fr))}
+.promos{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));margin-bottom:30px}
+.promo{border-radius:var(--r-lg);padding:22px;display:flex;flex-direction:column;gap:6px}
+.promo h3{margin:0;font-size:26px;line-height:1.1;letter-spacing:-.6px;font-weight:800}
+.promo p{margin:0;font-size:17px}
+.promo.yellow{background:var(--yellow);color:var(--yellow-ink)}
+.promo.red{background:var(--bad-solid);color:#fff}
+.promo.green{background:var(--mint);color:var(--yellow-ink)}
+@media (prefers-color-scheme: dark){ .promo.green{color:var(--ink)} }
+.promo .row{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.promo button{align-self:flex-start;margin-top:12px}
+.pchip{background:#fff;color:#14231b;border-radius:99px;padding:5px 12px;font-size:15px;font-weight:700}
+
+.item{display:flex;flex-direction:column;gap:12px}
+.item .head{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.emo{width:60px;height:60px;border-radius:18px;background:var(--tile);display:grid;place-items:center;font-size:32px}
+.item h3{margin:0;font-size:20px;letter-spacing:-.3px;font-weight:800}
+.meta{color:var(--muted);font-size:15px}
+.badge{font-size:14px;font-weight:800;padding:6px 12px;border-radius:99px;white-space:nowrap}
+.b-ok{background:var(--ok-bg);color:var(--ok-ink)}
+.b-warn{background:var(--warn-bg);color:var(--warn-ink)}
+.b-bad{background:var(--bad-bg);color:var(--bad-ink)}
+.row-btn{display:flex;gap:8px;flex-wrap:wrap}
+.empty{text-align:center;color:var(--muted);padding:40px 10px;grid-column:1/-1}
+
+/* ---- Form ---- */
+.two-col{display:grid;gap:14px;grid-template-columns:1fr}
+@media (min-width:860px){.two-col{grid-template-columns:1fr 1fr;align-items:start}}
+label{display:block;font-weight:800;font-size:16px;margin:14px 0 6px}
+input,select{font:inherit;width:100%;padding:13px 15px;border-radius:14px;border:1px solid var(--line);background:var(--bg);color:var(--ink);min-height:48px}
 .two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.hint{font-size:15px;color:var(--muted);margin:8px 0}
 .chips{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}
-.chip{font-size:13px;padding:6px 12px;border-radius:99px;border:1px solid var(--line);background:#fff}
-.chip.have{background:var(--g-l);border-color:#bfe0c9;color:var(--g-d);font-weight:600}
-.chip.urg{background:var(--warn-l);border-color:#f3d6ad;color:#a85a0c;font-weight:700}
-.chip.miss{color:var(--muted);border-style:dashed}
-button.chip{cursor:pointer;color:var(--ink);font-weight:600}
-.scan{position:relative;border-radius:var(--r);overflow:hidden;background:#000;margin:10px 0}
+.chip{font-size:15px;padding:7px 13px;border-radius:99px;border:1px solid var(--line);background:var(--card);color:var(--ink);font-weight:600}
+.chip.have{background:var(--ok-bg);border-color:transparent;color:var(--ok-ink);font-weight:700}
+.chip.urg{background:var(--warn-bg);border-color:transparent;color:var(--warn-ink);font-weight:800}
+.chip.miss{color:var(--muted);border-style:dashed;background:transparent}
+button.chip{cursor:pointer;min-height:40px;padding:7px 14px}
+.scan{position:relative;border-radius:var(--r);overflow:hidden;background:#000;margin:12px 0}
 .scan video{width:100%;display:block;max-height:280px;object-fit:cover}
-.scan .frame{position:absolute;inset:25% 12%;border:3px solid #7ee0a3;border-radius:14px;box-shadow:0 0 0 999px rgba(0,0,0,.35)}
+.scan .frame{position:absolute;inset:25% 12%;border:3px solid var(--yellow);border-radius:14px;box-shadow:0 0 0 999px rgba(0,0,0,.35)}
 .scan button{position:absolute;right:10px;top:10px}
-.hint{font-size:13px;color:var(--muted);margin:6px 0}
-.rec h3{margin:0;font-size:18px}
-.rec .top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
-.bar{height:8px;border-radius:9px;background:var(--line);overflow:hidden;margin:8px 0}
-.bar i{display:block;height:100%;background:var(--g);border-radius:9px}
-.rec ol{padding-left:20px;margin:10px 0}
+.scan[hidden]{display:none}
+
+/* ---- Ricette (fascia menta) ---- */
+.band{background:var(--mint);border-radius:var(--r-lg);padding:22px 16px}
+@media (min-width:760px){.band{padding:30px}}
+.rec{display:flex;flex-direction:column;gap:8px}
+.rec .top2{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.rec h3{margin:0;font-size:21px;letter-spacing:-.4px;font-weight:800;line-height:1.2}
+.count{flex:none;width:46px;height:46px;border-radius:50%;background:var(--forest);color:#fff;display:grid;place-items:center;font-weight:800;font-size:15px}
+.count.full{background:var(--yellow);color:var(--yellow-ink)}
+.bar2{height:8px;border-radius:9px;background:var(--line);overflow:hidden}
+.bar2 i{display:block;height:100%;background:var(--forest-2);border-radius:9px}
+.save{font-size:15px;font-weight:800;color:var(--warn-ink);background:var(--warn-bg);padding:6px 12px;border-radius:12px;align-self:flex-start}
+.rec ol{padding-left:22px;margin:10px 0}
 .rec li{margin:6px 0}
-.rec[hidden],.scan[hidden]{display:none}
-.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.stat{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:14px}
-.stat b{display:block;font-size:30px;line-height:1.1;letter-spacing:-1px}
-.stat span{color:var(--muted);font-size:13px}
-.big{text-align:center;padding:20px}
-.big b{font-size:52px;letter-spacing:-2px;color:var(--g-d)}
-.empty{text-align:center;color:var(--muted);padding:30px 10px}
-nav{position:fixed;left:12px;right:12px;bottom:calc(env(safe-area-inset-bottom) + 12px);max-width:616px;margin:0 auto;background:#1d2b22;border-radius:26px;display:flex;padding:7px;gap:4px;box-shadow:0 8px 24px rgba(0,0,0,.25)}
-nav button{flex:1;background:transparent;color:#b9c8bd;display:flex;flex-direction:column;align-items:center;gap:1px;padding:8px 4px;font-size:12px;font-weight:600;border-radius:20px}
-nav button span{font-size:20px;line-height:1}
-nav button.on{background:var(--g);color:#fff}
-.toast{position:fixed;left:50%;bottom:104px;transform:translateX(-50%);background:#1d2b22;color:#fff;padding:10px 18px;border-radius:99px;font-size:14px;opacity:0;pointer-events:none;transition:opacity .25s;max-width:90%;text-align:center;z-index:9}
+.rec [hidden]{display:none}
+
+/* ---- Statistiche ---- */
+.bigstat{background:var(--forest);color:#fff;border-radius:var(--r-lg);padding:30px 20px;text-align:center;margin-bottom:14px}
+.bigstat b{display:block;font-size:clamp(60px,16vw,96px);line-height:1;letter-spacing:-3px;color:var(--yellow)}
+.bigstat span{color:var(--forest-sub);font-size:18px}
+.stat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+@media (min-width:760px){.stat-grid{grid-template-columns:repeat(4,1fr)}}
+.stat b{display:block;font-size:40px;line-height:1.1;letter-spacing:-1.5px}
+.stat span{color:var(--muted);font-size:15px}
+.foot{margin:26px 0 8px;display:flex;gap:10px;flex-wrap:wrap}
+
+/* ---- Toast e dialogo ---- */
+.toast{position:fixed;left:50%;bottom:104px;transform:translateX(-50%);background:var(--forest);color:#fff;padding:12px 20px;border-radius:99px;font-size:16px;font-weight:700;opacity:0;pointer-events:none;transition:opacity .25s;max-width:90%;text-align:center;z-index:9}
 .toast.on{opacity:1}
-.foot{margin:26px 0 8px;display:flex;gap:8px;flex-wrap:wrap}
+.toast.err{background:var(--bad-solid)}
+@media (min-width:760px){.toast{bottom:32px}}
+dialog{border:0;border-radius:var(--r-lg);padding:26px;max-width:420px;width:calc(100% - 40px);background:var(--card);color:var(--ink);box-shadow:0 20px 60px rgba(0,0,0,.4)}
+dialog::backdrop{background:rgba(8,20,14,.6)}
+dialog h3{margin:0 0 8px;font-size:22px;letter-spacing:-.4px}
+dialog .warn{display:flex;gap:12px;align-items:flex-start}
+dialog .warn .ico{flex:none;width:46px;height:46px;border-radius:50%;background:var(--warn-bg);display:grid;place-items:center;font-size:22px}
+dialog p{margin:0 0 18px;color:var(--muted)}
+dialog .actions{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap}
 </style>
 </head>
 <body>
-<header>
-  <div class="logo"><span style="font-size:30px">🥬</span><div>MyFoodMind<small>Zero scarti, più sapore</small></div></div>
-</header>
 
-<main>
+<div class="top">
+  <div class="wrap bar">
+    <div class="logo"><span class="mark" aria-hidden="true">🥬</span>MyFoodMind</div>
+    <nav aria-label="Navigazione">
+      <button data-v="frigo" class="on" type="button"><span aria-hidden="true">🧊</span>Frigo</button>
+      <button data-v="aggiungi" type="button"><span aria-hidden="true">➕</span>Aggiungi</button>
+      <button data-v="ricette" type="button"><span aria-hidden="true">🍳</span>Ricette</button>
+      <button data-v="stats" type="button"><span aria-hidden="true">📊</span>Stats</button>
+    </nav>
+  </div>
+  <div class="wrap hero">
+    <div>
+      <h1 id="hero-h"></h1>
+      <p id="hero-p"></p>
+      <div id="hero-extra"></div>
+    </div>
+    <div class="hero-art" aria-hidden="true">
+      <div class="tile">🥑</div><div class="tile">🥛</div><div class="tile">🍅</div><div class="tile">🧀</div>
+    </div>
+  </div>
+</div>
+
+<main class="wrap">
   <!-- FRIGO -->
   <section class="view on" id="v-frigo">
-    <h1>Il tuo frigo</h1>
+    <div id="frigo-banner" class="promos"></div>
+    <h2>Nel tuo frigo</h2>
     <p class="sub" id="frigo-sub"></p>
-    <div id="frigo-banner"></div>
-    <div id="frigo-list"></div>
+    <div id="frigo-list" class="grid"></div>
   </section>
 
   <!-- AGGIUNGI -->
   <section class="view" id="v-aggiungi">
-    <h1>Aggiungi un alimento</h1>
-    <p class="sub">Scansiona il codice a barre oppure inserisci tutto a mano.</p>
+    <div class="two-col">
+      <div class="card">
+        <h2>Scansiona</h2>
+        <p class="sub">Usa il codice a barre del prodotto.</p>
+        <button id="btn-scan" class="yellow" type="button" style="width:100%">📷 Scansiona codice a barre</button>
+        <div class="scan" id="scan-box" hidden>
+          <video id="scan-video" playsinline muted></video>
+          <div class="frame"></div>
+          <button class="ghost small" id="btn-scan-stop" type="button">Chiudi</button>
+        </div>
+        <label for="codice">Oppure scrivi il codice</label>
+        <div style="display:flex;gap:8px">
+          <input id="codice" inputmode="numeric" placeholder="es. 8000000000011" autocomplete="off">
+          <button class="ghost" id="btn-codice" type="button" style="flex:none">Cerca</button>
+        </div>
+        <p class="hint">Codici d'esempio per la demo:</p>
+        <div class="chips" id="demo-codes"></div>
+        <p class="hint" id="scan-msg" aria-live="polite"></p>
+      </div>
 
-    <div class="card">
-      <button id="btn-scan" type="button">📷 Scansiona codice a barre</button>
-      <div class="scan" id="scan-box" hidden>
-        <video id="scan-video" playsinline muted></video>
-        <div class="frame"></div>
-        <button class="ghost small" id="btn-scan-stop" type="button">Chiudi</button>
-      </div>
-      <label for="codice">Oppure scrivi il codice</label>
-      <div style="display:flex;gap:8px">
-        <input id="codice" inputmode="numeric" placeholder="es. 8000000000011" autocomplete="off">
-        <button class="ghost" id="btn-codice" type="button" style="flex:none">Cerca</button>
-      </div>
-      <p class="hint">Codici d'esempio per la demo:</p>
-      <div class="chips" id="demo-codes"></div>
-      <p class="hint" id="scan-msg" aria-live="polite"></p>
+      <form class="card" id="form-add" autocomplete="off">
+        <h2>Dettagli</h2>
+        <p class="sub">Controlla i dati e scegli la scadenza.</p>
+        <label for="f-nome" style="margin-top:0">Nome dell'alimento</label>
+        <input id="f-nome" list="lista-ing" required placeholder="es. Latte, Zucchine…" maxlength="40">
+        <datalist id="lista-ing"></datalist>
+        <div class="two">
+          <div><label for="f-cat">Categoria</label><select id="f-cat"></select></div>
+          <div><label for="f-qta">Quantità</label><input id="f-qta" placeholder="es. 1 litro" maxlength="20"></div>
+        </div>
+        <label for="f-scad">Data di scadenza</label>
+        <input id="f-scad" type="date" required>
+        <p class="hint" id="f-hint"></p>
+        <button type="submit" class="yellow" style="width:100%;margin-top:8px">Aggiungi al frigo</button>
+      </form>
     </div>
-
-    <form class="card" id="form-add" autocomplete="off">
-      <label for="f-nome">Nome dell'alimento</label>
-      <input id="f-nome" list="lista-ing" required placeholder="es. Latte, Zucchine…" maxlength="40">
-      <datalist id="lista-ing"></datalist>
-      <div class="two">
-        <div><label for="f-cat">Categoria</label><select id="f-cat"></select></div>
-        <div><label for="f-qta">Quantità</label><input id="f-qta" placeholder="es. 1 litro" maxlength="20"></div>
-      </div>
-      <label for="f-scad">Data di scadenza</label>
-      <input id="f-scad" type="date" required>
-      <p class="hint" id="f-hint"></p>
-      <button type="submit" style="width:100%;margin-top:8px">Aggiungi al frigo</button>
-    </form>
   </section>
 
   <!-- RICETTE -->
   <section class="view" id="v-ricette">
-    <h1>Cosa cucino?</h1>
-    <p class="sub">Ricette scelte con gli alimenti che hai in frigo, prima quelle che salvano ciò che scade prima.</p>
-    <div id="ricette-list"></div>
+    <div class="band"><div id="ricette-list" class="grid"></div></div>
   </section>
 
   <!-- STATISTICHE -->
   <section class="view" id="v-stats">
-    <h1>Anti-spreco</h1>
-    <p class="sub">Quanto stai riuscendo a non buttare.</p>
-    <div class="card big"><b id="st-pct">—</b><br><span id="st-msg" class="sub"></span></div>
+    <div class="bigstat"><b id="st-pct">—</b><span id="st-msg"></span></div>
     <div class="stat-grid">
-      <div class="stat"><b id="st-ok">0</b><span>Consumati in tempo</span></div>
-      <div class="stat"><b id="st-late">0</b><span>Consumati dopo la scadenza</span></div>
-      <div class="stat"><b id="st-exp">0</b><span>Scaduti nel frigo</span></div>
-      <div class="stat"><b id="st-in">0</b><span>Alimenti nel frigo</span></div>
+      <div class="card stat"><b id="st-ok">0</b><span>Consumati in tempo</span></div>
+      <div class="card stat"><b id="st-late">0</b><span>Consumati dopo la scadenza</span></div>
+      <div class="card stat"><b id="st-exp">0</b><span>Scaduti nel frigo</span></div>
+      <div class="card stat"><b id="st-in">0</b><span>Alimenti nel frigo</span></div>
     </div>
     <div class="foot">
       <button class="ghost small" id="btn-esempi" type="button">Ripristina alimenti d'esempio</button>
@@ -161,13 +266,18 @@ nav button.on{background:var(--g);color:#fff}
   </section>
 </main>
 
-<nav aria-label="Navigazione">
-  <button data-v="frigo" class="on" type="button"><span>🧊</span>Frigo</button>
-  <button data-v="aggiungi" type="button"><span>➕</span>Aggiungi</button>
-  <button data-v="ricette" type="button"><span>🍳</span>Ricette</button>
-  <button data-v="stats" type="button"><span>📊</span>Stats</button>
-</nav>
 <div class="toast" id="toast" role="status"></div>
+
+<dialog id="dlg" aria-labelledby="dlg-t">
+  <div class="warn">
+    <div class="ico" aria-hidden="true">⚠️</div>
+    <div><h3 id="dlg-t"></h3><p id="dlg-m"></p></div>
+  </div>
+  <div class="actions">
+    <button class="ghost" id="dlg-no" type="button">Annulla</button>
+    <button class="solid-danger" id="dlg-yes" type="button"></button>
+  </div>
+</dialog>
 
 <script>
 /* ============ DATI ============ */
@@ -258,7 +368,13 @@ const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2,6
 /* ============ STATO (localStorage) ============ */
 const KEY = 'myfoodmind.v1';
 let frigo = [];
-function salva(){ try{ localStorage.setItem(KEY, JSON.stringify(frigo)); }catch(e){} }
+let erroreSalvataggioMostrato = false;
+function salva(){
+  try{ localStorage.setItem(KEY, JSON.stringify(frigo)); }
+  catch(e){
+    if(!erroreSalvataggioMostrato){ erroreSalvataggioMostrato = true; toast('Non riesco a salvare i dati su questo browser: li perderai alla chiusura.', true); }
+  }
+}
 function carica(){
   try{ const r = localStorage.getItem(KEY); if(r){ frigo = JSON.parse(r); return; } }catch(e){}
   esempi();
@@ -270,12 +386,34 @@ function esempi(){
   frigo = frigo.filter(x => x.stato !== 'frigo').concat(nuovi);
   salva();
 }
-function toast(t){ const el=$('#toast'); el.textContent=t; el.classList.add('on'); clearTimeout(toast.t); toast.t=setTimeout(()=>el.classList.remove('on'),2200); }
+function toast(t, errore){
+  const el=$('#toast'); el.textContent=t; el.classList.toggle('err', !!errore); el.classList.add('on');
+  clearTimeout(toast.t); toast.t=setTimeout(()=>el.classList.remove('on'), errore ? 5000 : 2200);
+}
+// Dialogo di conferma per le azioni distruttive
+function chiedi(titolo, testo, etichetta){
+  return new Promise(res => {
+    $('#dlg-t').textContent = titolo; $('#dlg-m').textContent = testo; $('#dlg-yes').textContent = etichetta;
+    const d = $('#dlg');
+    const fine = v => { d.close(); $('#dlg-yes').onclick = $('#dlg-no').onclick = null; res(v); };
+    $('#dlg-yes').onclick = () => fine(true);
+    $('#dlg-no').onclick = () => fine(false);
+    d.oncancel = e => { e.preventDefault(); fine(false); };
+    d.showModal();
+  });
+}
 
 /* ============ NAVIGAZIONE ============ */
+const HERO = {
+  frigo:{h:'Il frigo che non spreca nulla.', p:'Scansiona gli alimenti, segui le scadenze e cucina con quello che hai.'},
+  aggiungi:{h:'Aggiungi un alimento.', p:'Scansiona il codice a barre o inseriscilo a mano: alla scadenza pensiamo noi.'},
+  ricette:{h:'Cosa cucino stasera?', p:'Ricette scelte con ciò che hai in frigo, prima quelle che salvano gli alimenti in scadenza.'},
+  stats:{h:'Il tuo impatto anti-spreco.', p:'Quanti alimenti stai riuscendo a usare in tempo.'}
+};
 function vai(v){
   document.querySelectorAll('.view').forEach(s => s.classList.toggle('on', s.id === 'v-'+v));
   document.querySelectorAll('nav button').forEach(b => b.classList.toggle('on', b.dataset.v === v));
+  $('#hero-h').textContent = HERO[v].h; $('#hero-p').textContent = HERO[v].p; $('#hero-extra').innerHTML = '';
   if(v !== 'aggiungi') fermaScanner();
   if(v === 'frigo') renderFrigo();
   if(v === 'ricette') renderRicette();
@@ -287,38 +425,47 @@ document.querySelectorAll('nav button').forEach(b => b.addEventListener('click',
 /* ============ FRIGO ============ */
 function stato(a){
   const d = diff(a.scad);
-  if(d < 0) return {cls:'bad', txt: d === -1 ? 'Scaduto ieri' : 'Scaduto da '+(-d)+' gg'};
-  if(d === 0) return {cls:'warn', txt:'Scade oggi'};
-  if(d === 1) return {cls:'warn', txt:'Scade domani'};
-  if(d <= 3) return {cls:'warn', txt:'Tra '+d+' giorni'};
-  return {cls:'ok', txt:'Tra '+d+' giorni'};
+  if(d < 0) return {cls:'bad', txt:'⛔ ' + (d === -1 ? 'Scaduto ieri' : 'Scaduto da '+(-d)+' gg')};
+  if(d === 0) return {cls:'warn', txt:'⏰ Scade oggi'};
+  if(d === 1) return {cls:'warn', txt:'⏰ Scade domani'};
+  if(d <= 3) return {cls:'warn', txt:'⏰ Tra '+d+' giorni'};
+  return {cls:'ok', txt:'✓ Tra '+d+' giorni'};
 }
 function renderFrigo(){
   const lista = frigo.filter(a => a.stato === 'frigo').sort((a,b) => a.scad.localeCompare(b.scad));
-  $('#frigo-sub').textContent = lista.length ? lista.length + (lista.length === 1 ? ' alimento' : ' alimenti') + ', in ordine di scadenza.' : 'Il frigo è vuoto.';
   const scaduti = lista.filter(a => diff(a.scad) < 0);
   const presto = lista.filter(a => diff(a.scad) >= 0 && diff(a.scad) <= 3);
+  $('#frigo-sub').textContent = lista.length ? lista.length + (lista.length === 1 ? ' alimento' : ' alimenti') + ', in ordine di scadenza.' : 'Il frigo è vuoto.';
+  $('#hero-extra').innerHTML = '<button class="yellow" type="button" data-go="aggiungi">➕ Aggiungi un alimento</button>' +
+    '<span class="hpill">🧊 '+lista.length+' nel frigo</span>' +
+    (presto.length ? '<span class="hpill">⏰ '+presto.length+' in scadenza</span>' : '') +
+    (scaduti.length ? '<span class="hpill">⛔ '+scaduti.length+' scaduti</span>' : '');
+  const chips = arr => '<div class="row">'+arr.map(a => '<span class="pchip">'+a.e+' '+esc(a.nome)+'</span>').join('')+'</div>';
   let b = '';
-  if(scaduti.length) b += '<div class="banner bad"><b>⛔ Già scaduti ('+scaduti.length+')</b>'+esc(scaduti.map(a=>a.nome).join(', '))+'. Controllali prima di usarli.</div>';
-  if(presto.length) b += '<div class="banner"><b>⏰ Scade presto ('+presto.length+')</b>'+esc(presto.map(a=>a.nome).join(', '))+'<br><button class="small" type="button" data-go="ricette">Vedi ricette che li usano</button></div>';
-  if(!scaduti.length && !presto.length && lista.length) b = '<div class="banner ok-box"><b>✅ Tutto sotto controllo</b>Nessun alimento in scadenza nei prossimi 3 giorni.</div>';
+  if(presto.length) b += '<div class="promo yellow"><h3>⏰ Scade presto</h3><p>Usali nei prossimi 3 giorni.</p>'+chips(presto)+'<button type="button" data-go="ricette">Vedi le ricette che li usano</button></div>';
+  if(scaduti.length) b += '<div class="promo red"><h3>⛔ Già scaduti</h3><p>Controllali con attenzione prima di usarli.</p>'+chips(scaduti)+'</div>';
+  if(!presto.length && !scaduti.length && lista.length) b = '<div class="promo green"><h3>✅ Tutto sotto controllo</h3><p>Nessun alimento in scadenza nei prossimi 3 giorni.</p></div>';
   $('#frigo-banner').innerHTML = b;
+  $('#frigo-banner').style.display = b ? '' : 'none';
   $('#frigo-list').innerHTML = lista.length ? lista.map(a => {
     const s = stato(a);
-    return '<div class="card item s-'+s.cls+'">'+
-      '<div class="emo">'+a.e+'</div>'+
-      '<div><h3>'+esc(a.nome)+'</h3><div class="meta">'+esc(a.qta || CATS[a.cat].n)+' · '+dataIt(a.scad)+'</div></div>'+
-      '<span class="badge b-'+s.cls+'">'+s.txt+'</span>'+
+    return '<div class="card item">'+
+      '<div class="head"><div class="emo" aria-hidden="true">'+a.e+'</div><span class="badge b-'+s.cls+'">'+s.txt+'</span></div>'+
+      '<div><h3>'+esc(a.nome)+'</h3><div class="meta">'+esc(a.qta || CATS[a.cat].n)+' · scade il '+dataIt(a.scad)+'</div></div>'+
       '<div class="row-btn"><button class="small" type="button" data-act="cons" data-id="'+a.id+'">✓ Consumato</button>'+
       '<button class="small danger" type="button" data-act="del" data-id="'+a.id+'">Elimina</button></div></div>';
-  }).join('') : '<div class="empty">Nessun alimento.<br>Vai su ➕ Aggiungi per scansionare il primo.</div>';
+  }).join('') : '<div class="empty">Nessun alimento.<br>Premi ➕ Aggiungi per scansionare il primo.</div>';
 }
-$('#v-frigo').addEventListener('click', e => {
+document.body.addEventListener('click', async e => {
   const go = e.target.closest('[data-go]'); if(go){ vai(go.dataset.go); return; }
-  const b = e.target.closest('[data-act]'); if(!b) return;
+  const b = e.target.closest('#v-frigo [data-act]'); if(!b) return;
   const a = frigo.find(x => x.id === b.dataset.id); if(!a) return;
   if(b.dataset.act === 'cons'){ a.stato = 'consumato'; a.chiuso = oggi(); toast('Ottimo, niente sprechi: ' + a.nome); }
-  else { frigo = frigo.filter(x => x.id !== a.id); toast('Rimosso: ' + a.nome); }
+  else {
+    const si = await chiedi('Eliminare ' + a.nome + '?', 'L\'alimento sparisce dal frigo e non conta nelle statistiche.', 'Elimina');
+    if(!si) return;
+    frigo = frigo.filter(x => x.id !== a.id); toast('Rimosso: ' + a.nome);
+  }
   salva(); renderFrigo();
 });
 
@@ -374,7 +521,7 @@ async function cercaCodice(codice){
       return;
     }
   }catch(e){}
-  msg.textContent = 'Codice non riconosciuto: inserisci l\'alimento a mano qui sotto.';
+  msg.textContent = 'Codice non riconosciuto o ricerca online non disponibile: inserisci l\'alimento a mano qui sotto.';
   $('#f-nome').focus();
 }
 $('#btn-codice').addEventListener('click', () => cercaCodice($('#codice').value));
@@ -406,7 +553,7 @@ $('#btn-scan-stop').addEventListener('click', fermaScanner);
 $('#btn-scan').addEventListener('click', async () => {
   const msg = $('#scan-msg');
   if(!('BarcodeDetector' in window) || !navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
-    msg.textContent = 'Questo browser non legge i codici con la fotocamera: scrivi il codice qui sotto o usa un esempio.'; return;
+    msg.textContent = 'Questo browser non legge i codici con la fotocamera: scrivi il codice qui sopra o usa un esempio.'; return;
   }
   try{
     stream = await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}});
@@ -447,11 +594,11 @@ function renderRicette(){
       const c = x.hanno.includes(k) ? (x.urgenti.includes(k) ? 'urg' : 'have') : 'miss';
       return '<span class="chip '+c+'">'+(c==='urg'?'⏰ ':c==='have'?'✓ ':'')+esc(nomeIng(k))+'</span>';
     }).join('');
-    const salva = x.urgenti.length ? '<div class="hint" style="color:#a85a0c;font-weight:700">Salva dallo spreco: '+esc(x.urgenti.map(nomeIng).join(', '))+'</div>' : '';
-    return '<div class="card rec"><div class="top"><div><h3>'+x.r.e+' '+esc(x.r.n)+'</h3><div class="meta" style="color:var(--muted);font-size:13px">'+x.r.t+' minuti</div></div>'+
-      '<span class="badge '+(pct===100?'b-ok':'b-warn')+'">'+x.hanno.length+'/'+x.r.ing.length+'</span></div>'+
-      '<div class="bar"><i style="width:'+pct+'%"></i></div>'+salva+'<div class="chips">'+chips+'</div>'+
-      '<button class="ghost small" type="button" data-toggle="'+x.r.id+'">Mostra il procedimento</button>'+
+    const salva = x.urgenti.length ? '<div class="save">Salva dallo spreco: '+esc(x.urgenti.map(nomeIng).join(', '))+'</div>' : '';
+    return '<div class="card rec"><div class="top2"><div><h3>'+x.r.e+' '+esc(x.r.n)+'</h3><div class="meta">'+x.r.t+' minuti</div></div>'+
+      '<span class="count'+(pct===100?' full':'')+'" title="Ingredienti che hai">'+x.hanno.length+'/'+x.r.ing.length+'</span></div>'+
+      '<div class="bar2"><i style="width:'+pct+'%"></i></div>'+salva+'<div class="chips">'+chips+'</div>'+
+      '<button class="ghost small" type="button" style="align-self:flex-start" data-toggle="'+x.r.id+'">Mostra il procedimento</button>'+
       '<div data-steps="'+x.r.id+'" hidden><ol>'+x.r.steps.map(s => '<li>'+esc(s)+'</li>').join('')+'</ol>'+
       (x.hanno.length ? '<button class="small" type="button" data-cook="'+x.r.id+'">🍽️ Ho cucinato questa</button>' : '')+'</div></div>';
   }).join('');
@@ -481,11 +628,14 @@ function renderStats(){
   $('#st-msg').textContent = p >= 80 ? 'Fantastico, quasi zero sprechi!' : p >= 50 ? 'Bene, usa le ricette per salvare ciò che scade.' : 'Controlla più spesso le scadenze: le ricette ti aiutano.';
 }
 $('#btn-esempi').addEventListener('click', () => { esempi(); toast('Alimenti d\'esempio aggiunti'); renderStats(); });
-$('#btn-reset').addEventListener('click', () => { if(confirm('Svuotare il frigo e le statistiche?')){ frigo = []; salva(); renderStats(); toast('Tutto svuotato'); } });
+$('#btn-reset').addEventListener('click', async () => {
+  const si = await chiedi('Svuotare tutto?', 'Il frigo e le statistiche verranno cancellati da questo dispositivo.', 'Svuota tutto');
+  if(si){ frigo = []; salva(); renderStats(); toast('Tutto svuotato'); }
+});
 
 /* ============ AVVIO ============ */
 carica();
-renderFrigo();
+vai('frigo');
 </script>
 </body>
 </html>
