@@ -12,7 +12,24 @@ Progetto del gruppo per il corso IAL Start Up, area **4 Ristorazione**.
 
 ## Stato del progetto
 
-In fase iniziale: il repository contiene solo questo README.
+Disponibile una **versione dimostrativa** (`index.html`, pagina unica senza dipendenze), sul branch `app-dimostrativa`:
+
+- **Frigo**: alimenti ordinati per scadenza con colori (verde, arancione, rosso), avviso "Scade presto", pulsanti Consumato / Elimina.
+- **Aggiungi**: scansione del codice a barre con la fotocamera (dove il browser lo supporta), codice digitato o inserimento a mano; la scadenza si sceglie dal calendario, con una durata tipica proposta per categoria.
+- **Ricette**: 14 ricette abbinate agli alimenti presenti, con priorità a quelli che scadono prima.
+- **Anti-spreco**: statistiche su consumati in tempo, scaduti e alimenti nel frigo.
+
+I dati restano salvati solo nel browser del dispositivo (nessun account, nessun server).
+
+### Come provarla
+
+Apri `index.html` in un browser. Per la fotocamera serve una pagina `https://` o `localhost`; senza fotocamera usa i codici d'esempio nella scheda Aggiungi.
+
+### Limiti della demo
+
+- Catalogo di codici a barre minimo (6 codici d'esempio); gli altri codici si cercano su Open Food Facts, se online.
+- Nessun avviso push: l'avviso di scadenza compare solo dentro l'app.
+- Nessuna sincronizzazione tra dispositivi.
 
 ## Come lavorare insieme
 
