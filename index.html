@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#2f8f5b">
+<title>MyFoodMind — Zero scarti, più sapore</title>
+<style>
+:root{
+  --bg:#f5f7ec; --card:#ffffff; --ink:#1d2b22; --muted:#6b7a70; --line:#e3e8d9;
+  --g:#2f8f5b; --g-d:#1f6b42; --g-l:#e1f2e6;
+  --ok:#2f8f5b; --warn:#e8892b; --warn-l:#fdf0e0; --bad:#d8473d; --bad-l:#fbe6e4;
+  --r:18px;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{color-scheme:light}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;padding-bottom:96px}
+header{padding:calc(env(safe-area-inset-top) + 16px) 18px 6px;max-width:640px;margin:0 auto}
+.logo{display:flex;align-items:center;gap:8px;font-weight:800;font-size:22px;letter-spacing:-.3px}
+.logo small{display:block;font-weight:500;font-size:13px;color:var(--muted);letter-spacing:0}
+main{max-width:640px;margin:0 auto;padding:6px 18px}
+h1{font-size:28px;line-height:1.15;margin:14px 0 6px;letter-spacing:-.5px}
+h2{font-size:19px;margin:22px 0 8px}
+p.sub{color:var(--muted);margin:0 0 14px}
+.view{display:none}.view.on{display:block}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:14px;margin:10px 0;box-shadow:0 1px 0 rgba(0,0,0,.02)}
+.banner{border-radius:var(--r);padding:14px;margin:12px 0;background:var(--warn-l);border:1px solid #f3d6ad}
+.banner.bad{background:var(--bad-l);border-color:#f0bcb8}
+.banner b{display:block;margin-bottom:2px}
+.banner button{margin-top:10px}
+.ok-box{background:var(--g-l);border-color:#bfe0c9}
+.item{display:grid;grid-template-columns:48px 1fr auto;gap:10px;align-items:center}
+.emo{width:48px;height:48px;border-radius:14px;background:var(--g-l);display:grid;place-items:center;font-size:26px}
+.item h3{margin:0;font-size:17px}
+.item .meta{color:var(--muted);font-size:13px}
+.badge{font-size:12px;font-weight:700;padding:5px 10px;border-radius:99px;white-space:nowrap;text-align:center}
+.b-ok{background:var(--g-l);color:var(--g-d)}
+.b-warn{background:var(--warn-l);color:#a85a0c}
+.b-bad{background:var(--bad-l);color:#a82a21}
+.item.s-warn{border-left:5px solid var(--warn)}
+.item.s-bad{border-left:5px solid var(--bad)}
+.item.s-ok{border-left:5px solid var(--ok)}
+.row-btn{display:flex;gap:8px;margin-top:10px;grid-column:1/-1}
+button{font:inherit;cursor:pointer;border:0;border-radius:99px;padding:11px 18px;font-weight:700;background:var(--g);color:#fff}
+button.ghost{background:#fff;color:var(--ink);border:1px solid var(--line)}
+button.small{padding:7px 14px;font-size:14px}
+button.danger{background:#fff;color:var(--bad);border:1px solid #f0bcb8}
+button:active{transform:scale(.98)}
+label{display:block;font-weight:700;font-size:14px;margin:12px 0 5px}
+input,select{font:inherit;width:100%;padding:12px 14px;border-radius:14px;border:1px solid var(--line);background:#fff;color:var(--ink)}
+input:focus,select:focus{outline:2px solid var(--g);outline-offset:1px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}
+.chip{font-size:13px;padding:6px 12px;border-radius:99px;border:1px solid var(--line);background:#fff}
+.chip.have{background:var(--g-l);border-color:#bfe0c9;color:var(--g-d);font-weight:600}
+.chip.urg{background:var(--warn-l);border-color:#f3d6ad;color:#a85a0c;font-weight:700}
+.chip.miss{color:var(--muted);border-style:dashed}
+button.chip{cursor:pointer;color:var(--ink);font-weight:600}
+.scan{position:relative;border-radius:var(--r);overflow:hidden;background:#000;margin:10px 0}
+.scan video{width:100%;display:block;max-height:280px;object-fit:cover}
+.scan .frame{position:absolute;inset:25% 12%;border:3px solid #7ee0a3;border-radius:14px;box-shadow:0 0 0 999px rgba(0,0,0,.35)}
+.scan button{position:absolute;right:10px;top:10px}
+.hint{font-size:13px;color:var(--muted);margin:6px 0}
+.rec h3{margin:0;font-size:18px}
+.rec .top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.bar{height:8px;border-radius:9px;background:var(--line);overflow:hidden;margin:8px 0}
+.bar i{display:block;height:100%;background:var(--g);border-radius:9px}
+.rec ol{padding-left:20px;margin:10px 0}
+.rec li{margin:6px 0}
+.rec[hidden],.scan[hidden]{display:none}
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:14px}
+.stat b{display:block;font-size:30px;line-height:1.1;letter-spacing:-1px}
+.stat span{color:var(--muted);font-size:13px}
+.big{text-align:center;padding:20px}
+.big b{font-size:52px;letter-spacing:-2px;color:var(--g-d)}
+.empty{text-align:center;color:var(--muted);padding:30px 10px}
+nav{position:fixed;left:12px;right:12px;bottom:calc(env(safe-area-inset-bottom) + 12px);max-width:616px;margin:0 auto;background:#1d2b22;border-radius:26px;display:flex;padding:7px;gap:4px;box-shadow:0 8px 24px rgba(0,0,0,.25)}
+nav button{flex:1;background:transparent;color:#b9c8bd;display:flex;flex-direction:column;align-items:center;gap:1px;padding:8px 4px;font-size:12px;font-weight:600;border-radius:20px}
+nav button span{font-size:20px;line-height:1}
+nav button.on{background:var(--g);color:#fff}
+.toast{position:fixed;left:50%;bottom:104px;transform:translateX(-50%);background:#1d2b22;color:#fff;padding:10px 18px;border-radius:99px;font-size:14px;opacity:0;pointer-events:none;transition:opacity .25s;max-width:90%;text-align:center;z-index:9}
+.toast.on{opacity:1}
+.foot{margin:26px 0 8px;display:flex;gap:8px;flex-wrap:wrap}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo"><span style="font-size:30px">🥬</span><div>MyFoodMind<small>Zero scarti, più sapore</small></div></div>
+</header>
+
+<main>
+  <!-- FRIGO -->
+  <section class="view on" id="v-frigo">
+    <h1>Il tuo frigo</h1>
+    <p class="sub" id="frigo-sub"></p>
+    <div id="frigo-banner"></div>
+    <div id="frigo-list"></div>
+  </section>
+
+  <!-- AGGIUNGI -->
+  <section class="view" id="v-aggiungi">
+    <h1>Aggiungi un alimento</h1>
+    <p class="sub">Scansiona il codice a barre oppure inserisci tutto a mano.</p>
+
+    <div class="card">
+      <button id="btn-scan" type="button">📷 Scansiona codice a barre</button>
+      <div class="scan" id="scan-box" hidden>
+        <video id="scan-video" playsinline muted></video>
+        <div class="frame"></div>
+        <button class="ghost small" id="btn-scan-stop" type="button">Chiudi</button>
+      </div>
+      <label for="codice">Oppure scrivi il codice</label>
+      <div style="display:flex;gap:8px">
+        <input id="codice" inputmode="numeric" placeholder="es. 8000000000011" autocomplete="off">
+        <button class="ghost" id="btn-codice" type="button" style="flex:none">Cerca</button>
+      </div>
+      <p class="hint">Codici d'esempio per la demo:</p>
+      <div class="chips" id="demo-codes"></div>
+      <p class="hint" id="scan-msg" aria-live="polite"></p>
+    </div>
+
+    <form class="card" id="form-add" autocomplete="off">
+      <label for="f-nome">Nome dell'alimento</label>
+      <input id="f-nome" list="lista-ing" required placeholder="es. Latte, Zucchine…" maxlength="40">
+      <datalist id="lista-ing"></datalist>
+      <div class="two">
+        <div><label for="f-cat">Categoria</label><select id="f-cat"></select></div>
+        <div><label for="f-qta">Quantità</label><input id="f-qta" placeholder="es. 1 litro" maxlength="20"></div>
+      </div>
+      <label for="f-scad">Data di scadenza</label>
+      <input id="f-scad" type="date" required>
+      <p class="hint" id="f-hint"></p>
+      <button type="submit" style="width:100%;margin-top:8px">Aggiungi al frigo</button>
+    </form>
+  </section>
+
+  <!-- RICETTE -->
+  <section class="view" id="v-ricette">
+    <h1>Cosa cucino?</h1>
+    <p class="sub">Ricette scelte con gli alimenti che hai in frigo, prima quelle che salvano ciò che scade prima.</p>
+    <div id="ricette-list"></div>
+  </section>
+
+  <!-- STATISTICHE -->
+  <section class="view" id="v-stats">
+    <h1>Anti-spreco</h1>
+    <p class="sub">Quanto stai riuscendo a non buttare.</p>
+    <div class="card big"><b id="st-pct">—</b><br><span id="st-msg" class="sub"></span></div>
+    <div class="stat-grid">
+      <div class="stat"><b id="st-ok">0</b><span>Consumati in tempo</span></div>
+      <div class="stat"><b id="st-late">0</b><span>Consumati dopo la scadenza</span></div>
+      <div class="stat"><b id="st-exp">0</b><span>Scaduti nel frigo</span></div>
+      <div class="stat"><b id="st-in">0</b><span>Alimenti nel frigo</span></div>
+    </div>
+    <div class="foot">
+      <button class="ghost small" id="btn-esempi" type="button">Ripristina alimenti d'esempio</button>
+      <button class="danger small" id="btn-reset" type="button">Svuota tutto</button>
+    </div>
+    <p class="hint">Dati salvati solo su questo dispositivo (nel browser). Nessun account.</p>
+  </section>
+</main>
+
+<nav aria-label="Navigazione">
+  <button data-v="frigo" class="on" type="button"><span>🧊</span>Frigo</button>
+  <button data-v="aggiungi" type="button"><span>➕</span>Aggiungi</button>
+  <button data-v="ricette" type="button"><span>🍳</span>Ricette</button>
+  <button data-v="stats" type="button"><span>📊</span>Stats</button>
+</nav>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+/* ============ DATI ============ */
+// Categorie e durata tipica (giorni) proposta come scadenza
+const CATS = {
+  latticini:{n:'Latticini',d:7}, carne:{n:'Carne',d:3}, pesce:{n:'Pesce',d:2},
+  uova:{n:'Uova',d:21}, frutta:{n:'Frutta',d:6}, verdura:{n:'Verdura',d:6},
+  pane:{n:'Pane',d:3}, dispensa:{n:'Dispensa',d:180}, altro:{n:'Altro',d:7}
+};
+// Ingredienti noti: k = chiave usata dalle ricette, d = durata tipica specifica
+const ING = [
+  {k:'latte',n:'Latte',e:'🥛',c:'latticini',d:6},
+  {k:'yogurt',n:'Yogurt',e:'🥣',c:'latticini',d:14},
+  {k:'mozzarella',n:'Mozzarella',e:'🧀',c:'latticini',d:5},
+  {k:'parmigiano',n:'Parmigiano',e:'🧀',c:'latticini',d:30},
+  {k:'burro',n:'Burro',e:'🧈',c:'latticini',d:30},
+  {k:'uova',n:'Uova',e:'🥚',c:'uova',d:21},
+  {k:'pollo',n:'Pollo',e:'🍗',c:'carne',d:3},
+  {k:'prosciutto',n:'Prosciutto cotto',e:'🥓',c:'carne',d:5},
+  {k:'tonno',n:'Tonno in scatola',e:'🐟',c:'dispensa',d:365},
+  {k:'pomodori',n:'Pomodori',e:'🍅',c:'verdura',d:6},
+  {k:'zucchine',n:'Zucchine',e:'🥒',c:'verdura',d:6},
+  {k:'spinaci',n:'Spinaci',e:'🥬',c:'verdura',d:4},
+  {k:'carote',n:'Carote',e:'🥕',c:'verdura',d:12},
+  {k:'patate',n:'Patate',e:'🥔',c:'verdura',d:20},
+  {k:'cipolla',n:'Cipolla',e:'🧅',c:'verdura',d:30},
+  {k:'peperoni',n:'Peperoni',e:'🫑',c:'verdura',d:7},
+  {k:'insalata',n:'Insalata',e:'🥗',c:'verdura',d:4},
+  {k:'funghi',n:'Funghi',e:'🍄',c:'verdura',d:4},
+  {k:'mele',n:'Mele',e:'🍎',c:'frutta',d:12},
+  {k:'banane',n:'Banane',e:'🍌',c:'frutta',d:5},
+  {k:'limone',n:'Limone',e:'🍋',c:'frutta',d:14},
+  {k:'pane',n:'Pane',e:'🍞',c:'pane',d:3},
+  {k:'pasta',n:'Pasta',e:'🍝',c:'dispensa',d:365},
+  {k:'riso',n:'Riso',e:'🍚',c:'dispensa',d:365},
+  {k:'farina',n:'Farina',e:'🌾',c:'dispensa',d:180}
+];
+// Codici a barre riconosciuti (demo): codice -> chiave ingrediente
+const CATALOGO = {
+  '8000000000011':'latte', '8000000000028':'uova', '8000000000035':'yogurt',
+  '8000000000042':'pasta', '8000000000059':'mozzarella', '8000000000066':'tonno'
+};
+// Ricette: olio, sale, pepe e acqua si danno per scontati
+const RICETTE = [
+  {id:'frittata',n:'Frittata di zucchine',e:'🍳',t:20,ing:['uova','zucchine','parmigiano'],
+   steps:['Taglia le zucchine a rondelle e saltale in padella con un filo d\'olio.','Sbatti le uova con parmigiano, sale e pepe.','Versa le uova sulle zucchine e cuoci a fuoco dolce 5 minuti per lato.']},
+  {id:'pasta-pom',n:'Pasta pomodoro e mozzarella',e:'🍝',t:20,ing:['pasta','pomodori','mozzarella','cipolla'],
+   steps:['Soffriggi la cipolla tritata, aggiungi i pomodori a pezzi e cuoci 10 minuti.','Cuoci la pasta al dente e scolala.','Unisci la pasta al sugo e completa con la mozzarella a cubetti.']},
+  {id:'pancake',n:'Pancake alla banana',e:'🥞',t:15,ing:['banane','uova','latte','farina'],
+   steps:['Schiaccia la banana con una forchetta.','Mescola con uova, latte e farina fino a un impasto liscio.','Cuoci un mestolo alla volta in padella antiaderente, 2 minuti per lato.']},
+  {id:'risotto',n:'Risotto agli spinaci',e:'🍚',t:30,ing:['riso','spinaci','cipolla','parmigiano','burro'],
+   steps:['Soffriggi la cipolla nel burro e tosta il riso.','Aggiungi acqua calda o brodo poco alla volta per 15 minuti.','Unisci gli spinaci tagliati negli ultimi 5 minuti e manteca con il parmigiano.']},
+  {id:'pollo-pep',n:'Pollo con peperoni',e:'🍗',t:35,ing:['pollo','peperoni','cipolla','pomodori'],
+   steps:['Rosola il pollo a pezzi in padella con olio e cipolla.','Aggiungi i peperoni a strisce e i pomodori.','Copri e cuoci 20 minuti, aggiustando di sale.']},
+  {id:'crema',n:'Crema di carote e patate',e:'🥕',t:35,ing:['carote','patate','cipolla'],
+   steps:['Taglia a pezzi verdure e cipolla e coprile d\'acqua.','Cuoci 25 minuti fino a farle morbide.','Frulla fino a una crema liscia e condisci con olio e pepe.']},
+  {id:'toast',n:'Toast prosciutto e mozzarella',e:'🥪',t:8,ing:['pane','prosciutto','mozzarella'],
+   steps:['Farcisci il pane con prosciutto e mozzarella a fette.','Scalda in padella o nella piastra finché il formaggio fonde.']},
+  {id:'insalata-tonno',n:'Insalata di tonno e pomodori',e:'🥗',t:10,ing:['tonno','pomodori','insalata','uova'],
+   steps:['Cuoci le uova 8 minuti e sgusciale.','Taglia pomodori e insalata e uniscili al tonno sgocciolato.','Aggiungi le uova a spicchi, olio, sale e limone.']},
+  {id:'pasta-zuc',n:'Pasta e zucchine',e:'🍝',t:20,ing:['pasta','zucchine','parmigiano','cipolla'],
+   steps:['Soffriggi la cipolla e aggiungi le zucchine a dadini.','Cuoci la pasta e finisci la cottura in padella con un mestolo d\'acqua.','Manteca con parmigiano.']},
+  {id:'smoothie',n:'Frullato yogurt e frutta',e:'🥤',t:5,ing:['yogurt','banane','mele','latte'],
+   steps:['Taglia la frutta a pezzi.','Frulla con lo yogurt e un goccio di latte fino a ottenere una crema.']},
+  {id:'pasta-tonno',n:'Pasta tonno e pomodoro',e:'🐟',t:15,ing:['pasta','tonno','pomodori'],
+   steps:['Scalda i pomodori in padella con olio e sale.','Aggiungi il tonno sgocciolato.','Condisci la pasta cotta al dente con il sugo.']},
+  {id:'torta-mele',n:'Torta di mele soffice',e:'🥧',t:55,ing:['mele','uova','farina','latte','burro'],
+   steps:['Sbatti uova e zucchero, aggiungi burro fuso, latte e farina.','Unisci le mele a fettine.','Cuoci in forno a 180 °C per 40 minuti.']},
+  {id:'pane-perso',n:'Pane perso (French toast)',e:'🍞',t:10,ing:['pane','uova','latte'],
+   steps:['Sbatti uova e latte in un piatto fondo.','Immergi le fette di pane raffermo da entrambi i lati.','Dora in padella con una noce di burro o olio.']},
+  {id:'spinaci-uova',n:'Spinaci e uova in padella',e:'🥬',t:12,ing:['spinaci','uova'],
+   steps:['Salta gli spinaci in padella con olio e uno spicchio d\'aglio.','Fai due buche e rompi le uova all\'interno.','Copri e cuoci finché l\'albume si rapprende.']}
+];
+
+/* ============ UTILITÀ ============ */
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const pad = n => String(n).padStart(2,'0');
+const iso = d => d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+const oggi = () => iso(new Date());
+const giorniA = n => { const d=new Date(); d.setDate(d.getDate()+n); return iso(d); };
+const diff = s => Math.round((new Date(s+'T00:00:00') - new Date(oggi()+'T00:00:00'))/86400000);
+const dataIt = s => new Date(s+'T00:00:00').toLocaleDateString('it-IT',{day:'numeric',month:'short',year:'numeric'});
+const ingK = k => ING.find(i => i.k === k);
+const ingNome = n => ING.find(i => i.n.toLowerCase() === n.trim().toLowerCase());
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2,6);
+
+/* ============ STATO (localStorage) ============ */
+const KEY = 'myfoodmind.v1';
+let frigo = [];
+function salva(){ try{ localStorage.setItem(KEY, JSON.stringify(frigo)); }catch(e){} }
+function carica(){
+  try{ const r = localStorage.getItem(KEY); if(r){ frigo = JSON.parse(r); return; } }catch(e){}
+  esempi();
+}
+function esempi(){
+  const mk = (k,qta,g) => { const i = ingK(k); return {id:uid(),k,nome:i.n,e:i.e,cat:i.c,qta,scad:giorniA(g),stato:'frigo'}; };
+  const nuovi = [mk('yogurt','2 vasetti',-1), mk('spinaci','1 busta',0), mk('zucchine','3',1), mk('latte','1 litro',2),
+    mk('pane','mezzo filone',2), mk('mozzarella','2 da 125 g',3), mk('pomodori','500 g',5), mk('uova','6',12), mk('pasta','500 g',300)];
+  frigo = frigo.filter(x => x.stato !== 'frigo').concat(nuovi);
+  salva();
+}
+function toast(t){ const el=$('#toast'); el.textContent=t; el.classList.add('on'); clearTimeout(toast.t); toast.t=setTimeout(()=>el.classList.remove('on'),2200); }
+
+/* ============ NAVIGAZIONE ============ */
+function vai(v){
+  document.querySelectorAll('.view').forEach(s => s.classList.toggle('on', s.id === 'v-'+v));
+  document.querySelectorAll('nav button').forEach(b => b.classList.toggle('on', b.dataset.v === v));
+  if(v !== 'aggiungi') fermaScanner();
+  if(v === 'frigo') renderFrigo();
+  if(v === 'ricette') renderRicette();
+  if(v === 'stats') renderStats();
+  window.scrollTo(0,0);
+}
+document.querySelectorAll('nav button').forEach(b => b.addEventListener('click', () => vai(b.dataset.v)));
+
+/* ============ FRIGO ============ */
+function stato(a){
+  const d = diff(a.scad);
+  if(d < 0) return {cls:'bad', txt: d === -1 ? 'Scaduto ieri' : 'Scaduto da '+(-d)+' gg'};
+  if(d === 0) return {cls:'warn', txt:'Scade oggi'};
+  if(d === 1) return {cls:'warn', txt:'Scade domani'};
+  if(d <= 3) return {cls:'warn', txt:'Tra '+d+' giorni'};
+  return {cls:'ok', txt:'Tra '+d+' giorni'};
+}
+function renderFrigo(){
+  const lista = frigo.filter(a => a.stato === 'frigo').sort((a,b) => a.scad.localeCompare(b.scad));
+  $('#frigo-sub').textContent = lista.length ? lista.length + (lista.length === 1 ? ' alimento' : ' alimenti') + ', in ordine di scadenza.' : 'Il frigo è vuoto.';
+  const scaduti = lista.filter(a => diff(a.scad) < 0);
+  const presto = lista.filter(a => diff(a.scad) >= 0 && diff(a.scad) <= 3);
+  let b = '';
+  if(scaduti.length) b += '<div class="banner bad"><b>⛔ Già scaduti ('+scaduti.length+')</b>'+esc(scaduti.map(a=>a.nome).join(', '))+'. Controllali prima di usarli.</div>';
+  if(presto.length) b += '<div class="banner"><b>⏰ Scade presto ('+presto.length+')</b>'+esc(presto.map(a=>a.nome).join(', '))+'<br><button class="small" type="button" data-go="ricette">Vedi ricette che li usano</button></div>';
+  if(!scaduti.length && !presto.length && lista.length) b = '<div class="banner ok-box"><b>✅ Tutto sotto controllo</b>Nessun alimento in scadenza nei prossimi 3 giorni.</div>';
+  $('#frigo-banner').innerHTML = b;
+  $('#frigo-list').innerHTML = lista.length ? lista.map(a => {
+    const s = stato(a);
+    return '<div class="card item s-'+s.cls+'">'+
+      '<div class="emo">'+a.e+'</div>'+
+      '<div><h3>'+esc(a.nome)+'</h3><div class="meta">'+esc(a.qta || CATS[a.cat].n)+' · '+dataIt(a.scad)+'</div></div>'+
+      '<span class="badge b-'+s.cls+'">'+s.txt+'</span>'+
+      '<div class="row-btn"><button class="small" type="button" data-act="cons" data-id="'+a.id+'">✓ Consumato</button>'+
+      '<button class="small danger" type="button" data-act="del" data-id="'+a.id+'">Elimina</button></div></div>';
+  }).join('') : '<div class="empty">Nessun alimento.<br>Vai su ➕ Aggiungi per scansionare il primo.</div>';
+}
+$('#v-frigo').addEventListener('click', e => {
+  const go = e.target.closest('[data-go]'); if(go){ vai(go.dataset.go); return; }
+  const b = e.target.closest('[data-act]'); if(!b) return;
+  const a = frigo.find(x => x.id === b.dataset.id); if(!a) return;
+  if(b.dataset.act === 'cons'){ a.stato = 'consumato'; a.chiuso = oggi(); toast('Ottimo, niente sprechi: ' + a.nome); }
+  else { frigo = frigo.filter(x => x.id !== a.id); toast('Rimosso: ' + a.nome); }
+  salva(); renderFrigo();
+});
+
+/* ============ AGGIUNGI ============ */
+const selCat = $('#f-cat');
+selCat.innerHTML = Object.entries(CATS).map(([k,v]) => '<option value="'+k+'">'+v.n+'</option>').join('');
+$('#lista-ing').innerHTML = ING.map(i => '<option value="'+esc(i.n)+'">').join('');
+$('#demo-codes').innerHTML = Object.entries(CATALOGO).map(([c,k]) => '<button class="chip" type="button" data-code="'+c+'">'+ingK(k).e+' '+ingK(k).n+'</button>').join('');
+let scadToccata = false, chiaveCorrente = null;
+function suggerisciData(giorni, motivo){
+  if(scadToccata) return;
+  $('#f-scad').value = giorniA(giorni);
+  $('#f-hint').textContent = 'Durata tipica proposta: ' + giorni + ' giorni' + (motivo ? ' (' + motivo + ')' : '') + '. Puoi cambiarla.';
+}
+$('#f-scad').addEventListener('input', () => { scadToccata = true; $('#f-hint').textContent = ''; });
+selCat.addEventListener('change', () => { chiaveCorrente = null; suggerisciData(CATS[selCat.value].d, CATS[selCat.value].n); });
+$('#f-nome').addEventListener('change', () => {
+  const i = ingNome($('#f-nome').value);
+  if(i){ selCat.value = i.c; chiaveCorrente = i.k; suggerisciData(i.d, i.n); }
+  else chiaveCorrente = null;
+});
+function compila(i, qta){
+  $('#f-nome').value = i.n; selCat.value = i.c; chiaveCorrente = i.k; if(qta) $('#f-qta').value = qta;
+  scadToccata = false; suggerisciData(i.d, i.n);
+  $('#f-scad').focus({preventScroll:true});
+  $('#form-add').scrollIntoView({behavior:'smooth', block:'center'});
+}
+async function cercaCodice(codice){
+  codice = String(codice).replace(/\D/g,'');
+  const msg = $('#scan-msg');
+  if(!codice){ msg.textContent = 'Scrivi un codice a barre (solo numeri).'; return; }
+  if(CATALOGO[codice]){ const i = ingK(CATALOGO[codice]); msg.textContent = '✅ Riconosciuto: ' + i.n; compila(i); return; }
+  msg.textContent = 'Cerco il codice online…';
+  try{
+    const ctrl = new AbortController(); const t = setTimeout(() => ctrl.abort(), 4000);
+    const r = await fetch('https://world.openfoodfacts.org/api/v2/product/'+codice+'.json?fields=product_name,categories_tags', {signal:ctrl.signal});
+    clearTimeout(t);
+    const j = await r.json();
+    if(j.status === 1 && j.product && j.product.product_name){
+      const tags = (j.product.categories_tags || []).join(' ');
+      let cat = 'altro';
+      if(/dairies|milk|cheese|yogurt/.test(tags)) cat = 'latticini';
+      else if(/meat|poultry/.test(tags)) cat = 'carne';
+      else if(/fish|seafood/.test(tags)) cat = 'pesce';
+      else if(/fruit/.test(tags)) cat = 'frutta';
+      else if(/vegetable/.test(tags)) cat = 'verdura';
+      else if(/bread/.test(tags)) cat = 'pane';
+      else if(/pasta|rice|flour|cereal|canned/.test(tags)) cat = 'dispensa';
+      msg.textContent = '✅ Trovato online: ' + j.product.product_name;
+      $('#f-nome').value = j.product.product_name.slice(0,40); selCat.value = cat; chiaveCorrente = null;
+      scadToccata = false; suggerisciData(CATS[cat].d, CATS[cat].n);
+      $('#form-add').scrollIntoView({behavior:'smooth', block:'center'});
+      return;
+    }
+  }catch(e){}
+  msg.textContent = 'Codice non riconosciuto: inserisci l\'alimento a mano qui sotto.';
+  $('#f-nome').focus();
+}
+$('#btn-codice').addEventListener('click', () => cercaCodice($('#codice').value));
+$('#codice').addEventListener('keydown', e => { if(e.key === 'Enter'){ e.preventDefault(); cercaCodice(e.target.value); } });
+$('#demo-codes').addEventListener('click', e => { const b = e.target.closest('[data-code]'); if(b){ $('#codice').value = b.dataset.code; cercaCodice(b.dataset.code); } });
+$('#form-add').addEventListener('submit', e => {
+  e.preventDefault();
+  const nome = $('#f-nome').value.trim(); if(!nome) return;
+  const noto = ingNome(nome) || (chiaveCorrente && ingK(chiaveCorrente));
+  const cat = selCat.value;
+  frigo.push({id:uid(), k: noto ? noto.k : nome.toLowerCase(), nome: noto ? noto.n : nome, e: noto ? noto.e : '🍽️',
+    cat, qta: $('#f-qta').value.trim(), scad: $('#f-scad').value, stato:'frigo'});
+  salva();
+  e.target.reset(); scadToccata = false; chiaveCorrente = null; $('#f-hint').textContent = ''; $('#scan-msg').textContent = ''; $('#codice').value = '';
+  suggerisciData(CATS[selCat.value].d, CATS[selCat.value].n);
+  toast('Aggiunto al frigo: ' + nome);
+  vai('frigo');
+});
+suggerisciData(CATS[selCat.value].d, CATS[selCat.value].n);
+
+/* ---- Scanner con fotocamera (dove il browser lo supporta) ---- */
+let stream = null, scanAttivo = false;
+function fermaScanner(){
+  scanAttivo = false;
+  if(stream){ stream.getTracks().forEach(t => t.stop()); stream = null; }
+  $('#scan-box').hidden = true;
+}
+$('#btn-scan-stop').addEventListener('click', fermaScanner);
+$('#btn-scan').addEventListener('click', async () => {
+  const msg = $('#scan-msg');
+  if(!('BarcodeDetector' in window) || !navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
+    msg.textContent = 'Questo browser non legge i codici con la fotocamera: scrivi il codice qui sotto o usa un esempio.'; return;
+  }
+  try{
+    stream = await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}});
+    const v = $('#scan-video'); v.srcObject = stream; await v.play();
+    $('#scan-box').hidden = false; scanAttivo = true; msg.textContent = 'Inquadra il codice a barre…';
+    const det = new BarcodeDetector({formats:['ean_13','ean_8','upc_a','upc_e']});
+    const ciclo = async () => {
+      if(!scanAttivo) return;
+      try{ const r = await det.detect(v); if(r.length){ const c = r[0].rawValue; fermaScanner(); $('#codice').value = c; cercaCodice(c); return; } }catch(e){}
+      setTimeout(ciclo, 300);
+    };
+    ciclo();
+  }catch(e){ fermaScanner(); msg.textContent = 'Non riesco ad accedere alla fotocamera: scrivi il codice a mano.'; }
+});
+
+/* ============ RICETTE ============ */
+function calcolaRicette(){
+  // ingredienti utilizzabili: nel frigo e non scaduti; per ciascuno tengo la scadenza più vicina
+  const disp = {};
+  frigo.filter(a => a.stato === 'frigo' && diff(a.scad) >= 0).forEach(a => {
+    if(!disp[a.k] || a.scad < disp[a.k].scad) disp[a.k] = a;
+  });
+  return RICETTE.map(r => {
+    const hanno = r.ing.filter(k => disp[k]);
+    const urgenti = hanno.filter(k => diff(disp[k].scad) <= 3);
+    const frac = hanno.length / r.ing.length;
+    return {r, hanno, urgenti, mancano: r.ing.filter(k => !disp[k]), frac, score: frac*100 + urgenti.length*25, disp};
+  }).filter(x => x.hanno.length >= 2 || (x.hanno.length >= 1 && x.r.ing.length <= 2))
+    .sort((a,b) => b.score - a.score);
+}
+const nomeIng = k => (ingK(k) ? ingK(k).n : k);
+function renderRicette(){
+  const lista = calcolaRicette();
+  if(!lista.length){ $('#ricette-list').innerHTML = '<div class="empty">Aggiungi qualche alimento al frigo e ti suggerisco subito una ricetta.</div>'; return; }
+  $('#ricette-list').innerHTML = lista.map(x => {
+    const pct = Math.round(x.frac*100);
+    const chips = x.r.ing.map(k => {
+      const c = x.hanno.includes(k) ? (x.urgenti.includes(k) ? 'urg' : 'have') : 'miss';
+      return '<span class="chip '+c+'">'+(c==='urg'?'⏰ ':c==='have'?'✓ ':'')+esc(nomeIng(k))+'</span>';
+    }).join('');
+    const salva = x.urgenti.length ? '<div class="hint" style="color:#a85a0c;font-weight:700">Salva dallo spreco: '+esc(x.urgenti.map(nomeIng).join(', '))+'</div>' : '';
+    return '<div class="card rec"><div class="top"><div><h3>'+x.r.e+' '+esc(x.r.n)+'</h3><div class="meta" style="color:var(--muted);font-size:13px">'+x.r.t+' minuti</div></div>'+
+      '<span class="badge '+(pct===100?'b-ok':'b-warn')+'">'+x.hanno.length+'/'+x.r.ing.length+'</span></div>'+
+      '<div class="bar"><i style="width:'+pct+'%"></i></div>'+salva+'<div class="chips">'+chips+'</div>'+
+      '<button class="ghost small" type="button" data-toggle="'+x.r.id+'">Mostra il procedimento</button>'+
+      '<div data-steps="'+x.r.id+'" hidden><ol>'+x.r.steps.map(s => '<li>'+esc(s)+'</li>').join('')+'</ol>'+
+      (x.hanno.length ? '<button class="small" type="button" data-cook="'+x.r.id+'">🍽️ Ho cucinato questa</button>' : '')+'</div></div>';
+  }).join('');
+}
+$('#v-ricette').addEventListener('click', e => {
+  const t = e.target.closest('[data-toggle]');
+  if(t){ const box = $('[data-steps="'+t.dataset.toggle+'"]'); box.hidden = !box.hidden; t.textContent = box.hidden ? 'Mostra il procedimento' : 'Nascondi il procedimento'; return; }
+  const c = e.target.closest('[data-cook]');
+  if(c){
+    const x = calcolaRicette().find(y => y.r.id === c.dataset.cook); if(!x) return;
+    x.hanno.forEach(k => { const a = x.disp[k]; a.stato = 'consumato'; a.chiuso = oggi(); });
+    salva(); toast('Buon appetito! Alimenti segnati come consumati.'); renderRicette();
+  }
+});
+
+/* ============ STATISTICHE ============ */
+function renderStats(){
+  const inTempo = frigo.filter(a => a.stato === 'consumato' && a.chiuso <= a.scad).length;
+  const tardi = frigo.filter(a => a.stato === 'consumato' && a.chiuso > a.scad).length;
+  const scaduti = frigo.filter(a => a.stato === 'frigo' && diff(a.scad) < 0).length;
+  const inFrigo = frigo.filter(a => a.stato === 'frigo').length;
+  const tot = inTempo + tardi + scaduti;
+  $('#st-ok').textContent = inTempo; $('#st-late').textContent = tardi; $('#st-exp').textContent = scaduti; $('#st-in').textContent = inFrigo;
+  if(!tot){ $('#st-pct').textContent = '—'; $('#st-msg').textContent = 'Segna qualche alimento come consumato per iniziare.'; return; }
+  const p = Math.round(inTempo / tot * 100);
+  $('#st-pct').textContent = p + '%';
+  $('#st-msg').textContent = p >= 80 ? 'Fantastico, quasi zero sprechi!' : p >= 50 ? 'Bene, usa le ricette per salvare ciò che scade.' : 'Controlla più spesso le scadenze: le ricette ti aiutano.';
+}
+$('#btn-esempi').addEventListener('click', () => { esempi(); toast('Alimenti d\'esempio aggiunti'); renderStats(); });
+$('#btn-reset').addEventListener('click', () => { if(confirm('Svuotare il frigo e le statistiche?')){ frigo = []; salva(); renderStats(); toast('Tutto svuotato'); } });
+
+/* ============ AVVIO ============ */
+carica();
+renderFrigo();
+</script>
+</body>
+</html>
